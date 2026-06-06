@@ -1,0 +1,56 @@
+# Ambientes virtuais
+.venv/
+venv/
+env/
+ENV/
+
+# Byte-code / cache do Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Distribuição / empacotamento
+build/
+dist/
+*.egg-info/
+.eggs/
+*.egg
+
+# Caches de ferramentas
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.cache/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Cobertura de testes
+.coverage
+.coverage.*
+htmlcov/
+
+# Saídas geradas (figuras, logs, dados)
+*.log
+*.png
+*.jpg
+*.gif
+*.mp4
+*.csv
+*.npy
+*.npz
+
+# Configurações de IDE / editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Arquivos do sistema operacional
+.DS_Store
+Thumbs.db
+
+# Configurações locais do Claude
+.claude/settings.local.json
