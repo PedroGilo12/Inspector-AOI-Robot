@@ -1,0 +1,522 @@
+{
+  "caps": {
+    "informal": 1,
+    "axes": 6,
+    "uart": 1,
+    "usb_cdc": 1,
+    "serial_ports": 3,
+    "sdcard": 1,
+    "littlefs": 1,
+    "probe": 1,
+    "safety_door": 1,
+    "estop": 1,
+    "wifi": 1,
+    "bluetooth": 1,
+    "neopixels": 1,
+    "pwm_spindle_aux": 3,
+    "pio_board": "esp32dev",
+    "plugins": [
+      { "id": "bluetooth" },
+      { "id": "spindle" },
+      { "id": "modbus" },
+      { "id": "eeprom" },
+      { "id": "sdcard" },
+      { "id": "webui" },
+      { "id": "networking" },
+      { "id": "wifi_networking" },
+      { "id": "keypad" },
+      { "id": "macros" },
+      { "id": "laser_cluster" },
+      { "id": "laser_coolant" },
+      { "id": "laser_overdrive" },
+      { "id": "motors" },
+      { "id": "openpnp" },
+      { "id": "embroidery" }
+    ]
+  },
+  "symbols": {
+    "OVERRIDE_MY_MACHINE": 1,
+  "TMC_STEALTHCHOP": 0
+  },
+  "symbols_networking": {
+    "LWIP_HTTPD_CUSTOM_FILES": 0,
+    "LWIP_HTTPD_DYNAMIC_HEADERS": 1,
+    "LWIP_HTTPD_SUPPORT_V09": 0,
+    "LWIP_HTTPD_SUPPORT_11_KEEPALIVE": 1,
+    "LWIP_HTTPD_SUPPORT_POST": 1,
+    "LWIP_HTTPD_DYNAMIC_FILE_READ": 1
+  },
+  "boards": [
+    {
+      "name": "BlackBox X32",
+      "symbol": "BOARD_BLACKBOX_X32",
+      "URL": "https://docs.openbuilds.com/doku.php?id=docs:blackbox-x32:start",
+      "MAP": "main/boards/BlackBoxX32_map.h",
+      "caps": {
+        "axes": 4,
+        "auto_square": 1,
+        "usb_cdc": 0,
+        "digital_in": 2,
+        "safety_door": 1,
+        "serial_ports": 1,
+        "sdcard": 1,
+        "wifi": 1,
+        "bluetooth": 1,
+        "control_inputs": 0
+      },
+      "symbols": {
+        "DEFAULT_LIMIT_SIGNALS_INVERT_MASK": "N_AXIS",
+        "DEFAULT_PROBE_SIGNAL_INVERT": 1,
+        "DEFAULT_ENABLE_SIGNALS_INVERT_MASK": 0,
+        "DEFAULT_STEPPER_IDLE_LOCK_TIME": 255,
+        "MIN_FEED_RATE_OVERRIDE": 1,
+        "MAX_FEED_RATE_OVERRIDE": 999
+      }
+    },
+    {
+      "name": "BTT Rodent",
+      "symbol": "BOARD_BTT_RODENT",
+      "URL": "https://github.com/bigtreetech/Rodent/tree/master",
+      "MAP": "main/boards/btt_rodent_map.h",
+      "caps": {
+        "axes": 5,
+        "usb_cdc": 0,
+        "serial_ports": 2,
+        "trinamic": 5160,
+        "trinamic_spi_cs": 1,
+        "trinamic_spi_chain": 1,
+        "i2c": 1,
+        "sdcard": 1,
+        "wifi": 1,
+        "bluetooth": 1,
+        "control_inputs": 0,
+        "modbus_rtu_dir": 1
+      }
+    },
+    {
+      "name": "BDRING 6-PACK v1?",
+      "symbol": "BOARD_BDRING_I2S6A",
+      "URL": "https://github.com/bdring/6-Pack_CNC_Controller",
+      "MAP": "main/boards/bdring_i2s_6_axis_map.h",
+      "caps": {
+        "axes": 6,
+        "usb_cdc": 0,
+        "serial_ports": 2,
+        "trinamic_spi_cs": 1,
+        "trinamic_spi_chain": 1,
+        "wifi": 1,
+        "bluetooth": 1,
+        "control_inputs": 0
+      }
+    },
+    {
+      "name": "BDRING v1 6-Pack",
+      "symbol": "BOARD_BDRING_6X",
+      "URL": "https://github.com/bdring/6-Pack_CNC_Controller",
+      "MAP": "main/boards/bdring_i2s_6x_v1_map.h",
+      "caps": {
+        "axes": 6,
+        "usb_cdc": 0,
+        "serial_ports": 2,
+        "sdcard": 1,
+        "wifi": 1,
+        "bluetooth": 1,
+        "control_inputs": 0
+      }
+    },
+    {
+      "name": "Corgi",
+      "symbol": "BOARD_CORGI",
+      "notes": "Not tested!",
+      "URL": "http://wiki.fluidnc.com/en/hardware/official/corgi",
+      "MAP": "main/boards/corgi_map.h",
+      "caps": {
+        "axes": 6,
+        "usb_cdc": 0,
+        "serial_ports": 3,
+        "trinamic_spi_cs": 1,
+        "trinamic_spi_chain": 1,
+        "wifi": 1,
+        "bluetooth": 1,
+        "control_inputs": 0
+      }
+    },
+    {
+      "name": "FluidNC v3 6-Pack",
+      "symbol": "BOARD_BDRING_6X_V3",
+      "URL": "http://wiki.fluidnc.com/en/hardware/official/6_Pack_Integrated_ESP32",
+      "MAP": "main/boards/bdring_i2s_6x_v3_map.h",
+      "caps": {
+        "axes": 6,
+        "usb_cdc": 0,
+        "serial_ports": 2,
+        "sdcard": 1,
+        "wifi": 1,
+        "bluetooth": 1,
+        "control_inputs": 0
+      }
+    },
+    {
+      "name": "ESPDUINO-32 Wemos D1 R32",
+      "symbol": "BOARD_ESPDUINO32",
+      "MAP": "main/boards/espduino-32_wemos_d1_r32_uno_map.h ",
+      "URL": "",
+      "caps": {
+        "axes": 3,
+        "usb_cdc": 0,
+        "serial_ports": 2,
+        "safety_door": 0,
+        "sdcard": 1,
+        "probe": 1,
+        "pwm_spindle_aux": 2,
+        "wifi": 1,
+        "bluetooth": 1
+      }
+    },
+    {
+      "name": "MKS DLC32 2.0",
+      "symbol": "BOARD_MKS_DLC32_V2P0",
+      "URL": "https://github.com/makerbase-mks/MKS-DLC32",
+      "MAP": "main/boards/mks_dlc32_2_0_map.h",
+      "caps": {
+        "axes": 3,
+        "usb_cdc": 0,
+        "digital_in": 1,
+        "digital_out": 4,
+        "safety_door": 0,
+        "serial_ports": 1,
+        "i2c": 1,
+        "pwm_spindle_aux": 2,
+        "sdcard": 1,
+        "wifi": 1,
+        "bluetooth": 1,
+        "control_inputs": 1
+      }
+    },
+    {
+      "name": "MKS DLC32 MAX v1, 8MB+ flash",
+      "symbol": "BOARD_MKS_DLC32_MAX_V1",
+      "URL": "https://github.com/makerbase-mks/MKS-DLC32",
+      "notes": "Experimental!",
+      "MAP": "main/boards/mks_dlc32_max_1_0_map.h",
+      "caps": {
+        "axes": 4,
+        "usb_cdc": 0,
+        "serial_ports": 2,
+        "digital_in": 1,
+        "eeprom": 0,
+        "fram": 0,
+        "i2c": 0,
+        "sdcard": 1,
+        "wifi": 1,
+        "bluetooth": 0,
+        "pio_board": "esp32-s3-devkitc-1",
+        "control_inputs": 1
+      },
+      "cmake_args": {
+        "SDKCONFIG_DEFAULTS": "\"sdkconfig.defaults;sdkconfig_s3_8m\""
+      }
+    },
+    {
+      "name": "MKS Tinybee V1.0",
+      "symbol": "BOARD_MKS_TINYBEE_V1",
+      "URL": "https://github.com/makerbase-mks/MKS-TinyBee",
+      "MAP": "main/boards/mks_tinybee_1_0_map.h",
+      "caps": {
+        "axes": 5,
+        "usb_cdc": 0,
+        "serial_ports": 2,
+        "digital_in": 1,
+        "sdcard": 1,
+        "estop": 0,
+        "wifi": 1,
+        "bluetooth": 1,
+        "control_inputs": 2
+      }
+    },
+    {
+      "name": "SourceRabbit 4-axis CNC Motherboard",
+      "symbol": "BOARD_SOURCERABBIT_4AXIS",
+      "URL": "https://www.sourcerabbit.com/",
+      "MAP": "main/boards/sourcerabbit_4axis.h",
+      "caps": {
+        "axes": 4,
+        "auto_square": 0,
+        "usb_cdc": 0,
+        "safety_door": 0,
+        "estop": 0,
+        "serial_ports": 1,
+        "pwm_spindle_aux": 1,
+        "wifi": 1,
+        "bluetooth": 1,
+        "control_inputs": 0
+      }
+    },
+    {
+      "name": "SourceRabbit 4-axis CNC Motherboard v1.2",
+      "symbol": "BOARD_SOURCERABBIT_4AXIS_12",
+      "URL": "https://www.sourcerabbit.com/Shop/pr-i-86-t-4-axis-cnc-motherboard.htm",
+      "MAP": "main/boards/sourcerabbit_4axis.h",
+      "caps": {
+        "axes": 4,
+        "auto_square": 0,
+        "usb_cdc": 0,
+        "safety_door": 0,
+        "estop": 0,
+        "serial_ports": 1,
+        "wifi": 1,
+        "bluetooth": 1,
+        "control_inputs": 0
+      }
+    },
+	{
+	  "name": "SourceRabbit Rabbit Board 4-Axis",
+	  "symbol": "BOARD_SOURCERABBIT_RABBITBOARD_4_AXIS",
+	  "URL": "https://www.sourcerabbit.com/Shop/pr-i-106-t-rabbit-board-4-axis.htm",
+	  "MAP": "main/boards/sourcerabbit_rabbit_board_4-axis.h",
+	  "caps": {
+		"axes": 4,
+		"auto_square": 0,
+		"usb_cdc": 0,
+		"safety_door": 0,
+		"estop": 0,
+		"serial_ports": 1,
+		"pwm_spindle_aux": 1,
+		"wifi": 1,
+		"bluetooth": 1,
+		"control_inputs": 0
+	  }
+	},
+    {
+      "name": "PiBot 6-axis I2S",
+      "symbol": "BOARD_PIBOT_I2S_6_AXIS",
+      "URL": "https://www.pibot.com/pibot-fluidnc-grbl-cnc-controller-v4-9",
+      "MAP": "main/boards/pibot_i2s_6_axis_map.h",
+      "caps": {
+        "axes": 6,
+        "usb_cdc": 0,
+        "serial_ports": 2,
+        "digital_in": 1,
+        "i2c": 1, 
+        "sdcard": 1,
+        "wifi": 1,
+        "bluetooth": 1,
+        "control_inputs": 0,
+        "modbus_rtu_dir": 1
+      }
+    },
+    {
+      "name": "Protoneer v3",
+      "symbol": "BOARD_PROTONEER_3XX",
+      "URL": "https://blog.protoneer.co.nz/arduino-cnc-shield/",
+      "MAP": "main/boards/protoneer_3.xx_map.h",
+      "caps": {
+        "axes": 3,
+        "usb_cdc": 0,
+        "pwm_spindle_aux": 2,
+        "serial_ports": 1,
+        "wifi": 1,
+        "bluetooth": 1
+      }
+    },
+    {
+      "name": "Fysetc E4 v1.0",
+      "symbol": "BOARD_FYSETC_E4",
+      "URL": "https://www.fysetc.com/products/fysetc-e4-board-with-built-in-wi-fi-and-bluetooth-4-pcs-tmc2209-240mhz-16m-flash-3d-printer-control-board-based-for-3d-printer?variant=37558333341871",
+      "MAP": "main/boards/fysetc_e4_map.h",
+      "caps": {
+        "axes": 4,
+        "auto_square": 0,
+        "usb_cdc": 0,
+        "pwm_spindle_aux": 2,
+        "sdcard": 1,
+        "i2c": 1,
+        "serial_ports": 1,
+        "wifi": 1,
+        "bluetooth": 1,
+        "control_inputs": 1
+      }
+    },
+    {
+      "name": "xPro v5",
+      "symbol": "BOARD_XPRO_V5",
+      "URL": "https://www.spark-concepts.com/cnc-xpro-v5/",
+      "MAP": "main/boards/xPro_v5_map.h",
+      "caps": {
+        "axes": 4,
+        "digital_in": 2,
+        "usb_cdc": 0,
+        "serial_ports": 2,
+        "sdcard": 1,
+        "trinamic": 5160,
+        "trinamic_spi_chain": 1,
+        "wifi": 1,
+        "bluetooth": 1,
+        "control_inputs": 1
+      }
+    },
+    {
+      "name": "Root CNC v2.x",
+      "notes": "Not tested!",
+      "symbol": "BOARD_ROOTCNC_V2",
+      "URL": "https://wiki.rootcnc.com/en/Root-Controller-ISO/DetailedInfo",
+      "MAP": "main/boards/root_cnc_v2_map.h",
+      "caps": {
+        "axes": 6,
+        "digital_in": 1,
+        "usb_cdc": 0,
+        "serial_ports": 2,
+        "estop": 0,
+        "sdcard": 1,
+        "wifi": 1,
+        "bluetooth": 1,
+        "control_inputs": 0,
+        "modbus_rtu_dir": 1
+      }
+    },
+    {
+      "name": "Root CNC v3",
+      "symbol": "BOARD_ROOTCNC_V3",
+      "URL": "https://wiki.rootcnc.com/en/Root-Controller-ISO/DetailedInfo",
+      "MAP": "main/boards/root_cnc_v3_map.h",
+      "caps": {
+        "axes": 6,
+        "digital_in": 1,
+        "usb_cdc": 0,
+        "serial_ports": 2,
+        "estop": 0,
+        "sdcard": 1,
+        "wifi": 1,
+        "bluetooth": 1,
+        "control_inputs": 0,
+        "modbus_rtu_dir": 1
+      }
+    },
+    {
+      "name": "Root CNC PRO",
+      "notes": "For verification!",
+      "symbol": "BOARD_ROOTCNC_PRO",
+      "URL": "https://wiki.rootcnc.com/en/Root-Controller-pro/DetailedInfo",
+      "MAP": "main/boards/root_cnc_pro_map.h",
+      "caps": {
+        "axes": 6,
+        "digital_in": 1,
+        "usb_cdc": 0,
+        "serial_ports": 2,
+        "estop": 0,
+        "sdcard": 1,
+        "wifi": 1,
+        "bluetooth": 1,
+    "modbus_rtu_dir": 1
+      }
+    },
+    {
+      "name": "CNC 3040",
+      "symbol": "BOARD_CNC3040",
+      "URL": "https://github.com/shaise/grblHAL_CNC3040",
+      "MAP": "main/boards/cnc3040_map.h",
+      "caps": {
+        "axes": 4,
+        "auto_square": 0,
+        "usb_cdc": 0,
+        "serial_ports": 2,
+        "estop": 0,
+        "pwm_spindle_aux": 2,
+        "safety_door": 1,
+        "control_inputs": 0
+      }
+    },
+    {
+      "name": "BDRING v3.5",
+      "symbol": "BOARD_BDRING_V3P5",
+      "URL": "",
+      "MAP": "main/boards/bdring_v3.5_map.h",
+      "caps": {
+        "axes": 3,
+        "digital_in": 1,
+        "usb_cdc": 0,
+        "serial_ports": 1,
+        "sdcard": 1,
+        "wifi": 1,
+        "bluetooth": 1
+      }
+    },
+    {
+      "name": "BDRING v4",
+      "symbol": "BOARD_BDRING_V4",
+      "URL": "",
+      "MAP": "main/boards/bdring_v4_map.h",
+      "caps": {
+        "axes": 3,
+        "usb_cdc": 0,
+        "serial_ports": 2,
+        "digital_in": 1,
+        "sdcard": 1,
+        "wifi": 1,
+        "bluetooth": 1
+      }
+    },
+    {
+      "name": "Jackpot",
+      "symbol": "BOARD_JACKPOT",
+      "notes": "Not tested!",
+      "URL": "https://docs.v1e.com/electronics/jackpot/",
+      "MAP": "main/boards/jackpot_map.h",
+      "caps": {
+        "axes": 6,
+        "digital_in": 0,
+        "digital_out": 1,
+        "usb_cdc": 0,
+        "serial_ports": 2,
+        "sdcard": 1,
+        "trinamic": 2209,
+        "trinamic_uart_addr": 1,
+        "wifi": 1,
+        "bluetooth": 1,
+      "control_inputs": 0
+      }
+    },
+    {
+      "name": "Generic map for ESP32-S3",
+      "symbol": "BOARD_GENERIC_S3",
+      "notes": "Experimental!",
+      "MAP": "main/boards/generic_s3_map.h",
+      "caps": {
+        "axes": 3,
+        "serial_ports": 1,
+        "digital_in": 1,
+        "eeprom": 1,
+        "fram": 1,
+        "i2c": 1,
+        "sdcard": 1,
+        "wifi": 1,
+        "bluetooth": 0,
+        "pio_board": "esp32-s3-devkitc-1"
+      },
+      "cmake_args": {
+        "SDKCONFIG_DEFAULTS": "\"sdkconfig.defaults;sdkconfig.defaults.esp32s3\""
+      }
+    },
+    {
+      "name": "CNC BoosterPack",
+      "symbol": "BOARD_CNC_BOOSTERPACK",
+      "URL": "https://github.com/terjeio/CNC_Boosterpack",
+      "MAP": "main/boards/boosterpack_map.h",
+      "symbols": {
+        "PCA9654E_ENABLE": 1
+      },
+      "caps": {
+        "axes": 3,
+        "usb_cdc": 0,
+        "serial_ports": 2,
+        "digital_in": 1,
+        "eeprom": 1,
+        "fram": 1,
+        "i2c": 1,
+        "sdcard": 1,
+        "wifi": 1,
+        "bluetooth": 1
+      }
+    }
+  ]
+}
