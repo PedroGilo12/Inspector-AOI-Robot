@@ -25,9 +25,10 @@ câmera no espaço operacional:
 - **Distribuição de carga otimizada no eixo Z**: os 4 motores ficam na coluna
   vertical, reduzindo a massa suspensa, a deflexão mecânica do braço e a inércia
   durante as paradas para inspeção.
-- **Interface serial (UART)** a 115200 bps, com comandos de movimentação linear
-  cartesiana (`G0`/`G1`, que usam a cinemática inversa interna) e de movimentação
-  direta das juntas (`G7`, com parâmetros `A`, `B`, `C`, `D`).
+- **Interface serial (UART)** a 115200 bps (também acessível por Wi-Fi, ver
+  [Firmware](#firmware-fw)), com comandos de movimentação linear cartesiana
+  (`G0`/`G1 X Y Z A`, que usam a cinemática inversa interna) e de movimentação
+  direta das juntas (`M100`, com `P=q1`, `Q=q2`, `R=q3`, `D=q4`).
 
 ### Espaço de configuração
 
@@ -50,9 +51,13 @@ coordenadas intermediários.
 .
 ├── docs/
 │   └── Inspecto_V1_Kinematic.pdf   # Artigo com a dedução completa da cinemática
+├── fw/
+│   └── grblhal_esp32/              # Firmware embarcado (grblHAL/ESP32) do robô real
 ├── kinematics/
 │   ├── inspector_fkine.py          # Cinemática direta (simbólica + visualização)
-│   └── inspector_ikine.py          # Cinemática inversa analítica + validação
+│   ├── inspector_ikine.py          # Cinemática inversa analítica + validação
+│   ├── ikine_loop.py               # Envio de trajetórias G-code via serial (teste)
+│   └── ikine_debug.py              # Depuração da cinemática inversa via serial
 ├── requirements.txt                # Dependências Python (versões fixadas)
 └── README.md
 ```
@@ -100,6 +105,121 @@ mantém-se o que melhor reconstrói `T` (a orientação desfaz a ambiguidade de 
 A função `validar()` gera configurações aleatórias dentro dos limites das juntas,
 calcula a pose pela cinemática direta, recupera as juntas pela inversa e verifica
 o erro de reconstrução (tolerância de `1e-9`).
+
+## Firmware (`fw/`)
+
+A pasta [fw/grblhal_esp32](fw/grblhal_esp32) contém o **firmware embarcado** que
+roda no robô físico: uma versão do [grblHAL](https://github.com/grblHAL) para
+**ESP32**, configurada para a placa **MKS TinyBee V1**. É o elo de hardware do
+ciclo descrito no artigo (teoria matemática → simulação no CoppeliaSim →
+protótipo real): as mesmas equações de cinemática deduzidas no PDF são embarcadas
+aqui e executadas em tempo real sobre os comandos G-code recebidos.
+
+### O que foi adicionado/alterado para o Inspector
+
+A base é o grblHAL/ESP32 original; a customização do Inspector se concentra em um
+**plugin de cinemática novo** mais pequenos ajustes no núcleo:
+
+**Arquivos novos**
+
+- [`main/grbl/kinematics/inspector.c`](fw/grblhal_esp32/main/grbl/kinematics/inspector.c)
+  — plugin de cinemática do Inspector (FK, IK, mistura CoreXY e o M-code `M100`).
+- [`main/grbl/kinematics/inspector.h`](fw/grblhal_esp32/main/grbl/kinematics/inspector.h)
+  — declara `inspector_init()`.
+
+**Arquivos modificados em relação ao upstream**
+
+- `main/grbl/config.h`:
+  - `N_AXIS` 3 → **5** (`X Y Z` + `A B`); o eixo C/_yaw_ é descartado porque o
+    robô não possui esse grau de liberdade — coerente com a conclusão do artigo
+    de que `q1` (yaw) não é um DOF independente.
+  - Habilita `KINEMATICS_API` e define `INSPECTOR_ROBOT On`.
+  - `DEFAULT_STEPPER_IDLE_LOCK_TIME` 25 → **255** ms (motores permanecem
+    energizados, evitando perda de posição entre movimentos).
+  - `DEFAULT_{X,Y,Z}_STEPS_PER_MM` 250 → **80**.
+- `main/grbl/grbllib.c`: inclui `kinematics/inspector.h` e chama `inspector_init()`
+  na inicialização (`grbl_enter()`), sob `#if INSPECTOR_ROBOT`.
+- `main/CMakeLists.txt`: adiciona `grbl/kinematics/inspector.c` à lista de fontes.
+- `main/my_machine.h`: seleciona `BOARD_MKS_TINYBEE_V1` e habilita Wi-Fi em modo
+  Soft-AP (`WIFI_ENABLE`, `WIFI_SOFTAP`) e a interface web (`WEBUI_ENABLE`).
+
+### Relação com o artigo
+
+O plugin implementa exatamente as equações deduzidas em
+[docs/Inspecto_V1_Kinematic.pdf](docs/Inspecto_V1_Kinematic.pdf):
+
+| Código (`inspector.c`)                | Função              | Artigo                                   |
+| ------------------------------------- | ------------------- | ---------------------------------------- |
+| `transform_to_cartesian`              | Cinemática direta   | `gamma` (eqs. 12–13), `pz` (eq. 14)      |
+| `transform_from_cartesian`            | Cinemática inversa  | `q4` (eq. 20), `q1` (eq. 25), ramo ± de `gamma` (eq. 28), `q3` (eq. 30), `q2` (eq. 32) |
+| Mistura CoreXY (`A_MOTOR`/`B_MOTOR`)  | Acoplamento físico  | Camada de hardware — fora do modelo DH   |
+| M-code `M100`                         | Juntas diretas      | "Movimentação Direta das Juntas (M100)"  |
+
+Pontos-chave herdados da análise do artigo:
+
+- O **_yaw_ não é entrada** do sistema: `q1` é determinado univocamente pela
+  posição cartesiana `XY` (eq. 25), então `G0`/`G1` recebem apenas `X Y Z` e o
+  _pitch_ `A` (= `q4`). A word `B` reportada pela FK é apenas informativa.
+- A IK tem **dois ramos** (sinal de `gamma`, eq. 28); o firmware escolhe
+  automaticamente o ramo cujas juntas caem dentro dos limites e **rejeita o
+  movimento** se nenhuma solução for válida.
+- A **mistura CoreXY** (`q3` = modo comum, `q4` = diferencial dos motores X/Y) é
+  um acoplamento mecânico do hardware, aplicado por cima do modelo DH.
+
+### Interfaces de comunicação
+
+O firmware aceita G-code por dois meios equivalentes (mesmo protocolo grbl):
+
+- **Serial (USB/UART)** a 115200 bps.
+- **Wi-Fi em modo Soft-AP**: o robô cria a rede `InspectorRobotV1` (sem roteador
+  externo) e fica acessível no IP fixo `192.168.5.1`, expondo os serviços:
+
+  | Serviço   | Porta | Finalidade                                   |
+  | --------- | ----- | -------------------------------------------- |
+  | Telnet    | 23    | Envio de G-code e respostas (igual ao serial) |
+  | WebSocket | 81    | Mesmo fluxo do Telnet, usado pela interface web |
+  | HTTP      | 80    | Interface gráfica (WebUI) no navegador        |
+  | FTP       | 21    | Transferência de arquivos de G-code           |
+
+Comandos de movimentação:
+
+- `G0`/`G1 X Y Z A` — movimento cartesiano (a IK interna calcula as juntas).
+- `M100 P Q R D` — controle direto das juntas: `P=q1` (base), `Q=q2` (vertical),
+  `R=q3` (trilho linear), `D=q4` (punho). Útil para calibração e testes de
+  hardware, pois pula a IK cartesiana.
+
+## Compilação e gravação do firmware
+
+O firmware é compilado com **ESP-IDF v4.3**. A forma mais simples é usar a imagem
+Docker oficial da Espressif, sem instalar a toolchain localmente.
+
+A partir da raiz do repositório, entre na pasta do firmware e suba o container
+(o `$(pwd)` montado precisa ser a pasta `fw/grblhal_esp32`):
+
+```bash
+cd fw/grblhal_esp32
+docker run -it --rm \
+  -v $(pwd):/grbl \
+  -w /grbl \
+  --privileged \
+  -v /dev:/dev \
+  espressif/idf:release-v4.3 \
+  /bin/bash
+```
+
+> `--privileged` e `-v /dev:/dev` expõem a porta serial do host dentro do
+> container; `release-v4.3` é a versão de ESP-IDF exigida por este driver.
+
+Já dentro do container, compile e grave na placa:
+
+```bash
+idf.py build
+idf.py -p /dev/ttyUSB0 flash
+idf.py -p /dev/ttyUSB0 flash monitor
+```
+
+> Ajuste `/dev/ttyUSB0` para a porta correta da sua placa. `flash monitor` grava
+> e abre o monitor serial em seguida; saia do monitor com `Ctrl+]`.
 
 ## Instalação
 
